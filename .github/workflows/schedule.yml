@@ -1,16 +1,18 @@
-name: Airtable Sync Job
+name: Airtable FTP Sync
 
 on:
   schedule:
-    - cron: '15 8-16 * * 1-5'  # 15 minutes past every hour from 08:00 to 16:00 UTC (Mon–Fri)
-  workflow_dispatch:  # Allows manual run from GitHub
+    # Every weekday (Mon–Fri) at 15 minutes past each hour from 9 AM to 5 PM UTC
+    - cron: '15 9-16 * * 1-5'
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  run:
+  run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -18,7 +20,17 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run sync script
-        run: python sync_airtable.py
+      - name: Run the sync script
+        env:
+          AIRTABLE_ACCESS_TOKEN: ${{ secrets.AIRTABLE_ACCESS_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          AIRTABLE_TABLE_NAME: ${{ secrets.AIRTABLE_TABLE_NAME }}
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+        run: |
+          python sync_airtable.py
