@@ -1,28 +1,21 @@
 import os
-from dotenv import load_dotenv
 from ftplib import FTP
 import pandas as pd
 from pyairtable import Api
 from concurrent.futures import ThreadPoolExecutor
-
+from datetime import datetime
 
 # Load environment variables
-load_dotenv()
 AIRTABLE_ACCESS_TOKEN = os.getenv("AIRTABLE_ACCESS_TOKEN")
 AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 AIRTABLE_TABLE_NAME = os.getenv("AIRTABLE_TABLE_NAME")
 
 print("Access token loaded:", AIRTABLE_ACCESS_TOKEN)
 
-# Get variables
-AIRTABLE_ACCESS_TOKEN = os.getenv("AIRTABLE_ACCESS_TOKEN")
-AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
-AIRTABLE_TABLE_NAME = os.getenv("AIRTABLE_TABLE_NAME")
-
 FTP_HOST = os.getenv("FTP_HOST")
 FTP_USER = os.getenv("FTP_USER")
 FTP_PASS = os.getenv("FTP_PASS")
-FTP_FILENAME = os.getenv("FTP_FILENAME")
+FTP_FILENAME = f"231ALL/231ALL_{datetime.today().strftime('%Y%m%d')}.csv"
 
 # Step 1: Connect to FTP and download the CSV
 print("Downloading CSV from FTP...")
